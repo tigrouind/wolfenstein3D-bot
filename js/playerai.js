@@ -250,6 +250,7 @@ Wolf.PlayerAI = (function() {
 			}
 		}
 		
+		drawMinimap(level, player, closest);
 	}
 	
 	function point2LineDistNotAbsolute(x, y, a) {
@@ -391,6 +392,87 @@ Wolf.PlayerAI = (function() {
         }		
 		return true;
 	}
+	
+	drawMinimap = function()
+	{
+		var canvaselement = document.getElementById('minimap');
+		var canvas = canvaselement.getContext("2d");
+		
+		drawRect = function(x, y, color) {
+			canvas.fillStyle = color; 
+			canvas.fillRect(x*6, (63-y)*6, 6, 6);
+		};
+		
+		return function(level, player, closest) {
+			
+			canvas.clearRect(0, 0, 384, 384);
+			
+			//path 
+			for(var i = 0 ; i < pathToExit.length ; i++)
+			{
+				var path = pathToExit[i];
+				drawRect(path.x, path.y, "white");
+			}
+			
+			//tiles
+			for (var x=0;x<64;x++) {
+				for (var y=0;y<64;y++) {
+					if(x == player.tile.x && y == player.tile.y) {
+						drawRect(x,y,"red");
+					}
+					else if(level.tileMap[x][y]&Wolf.ELEVATOR_TILE) {
+						drawRect(x,y,"lime");
+					}
+					else if(level.tileMap[x][y]&Wolf.DOOR_TILE && level.state.doorMap[x][y].action != Wolf.dr_open) {
+						if(!checkDoor(x, y, level, player))
+							drawRect(x,y,"gold");
+						else
+							drawRect(x,y,"darkgray");
+					}
+					else if(level.tileMap[x][y]&Wolf.SECRET_TILE) {
+						drawRect(x,y,"darkgray");
+					}					
+					else if(level.tileMap[x][y]&Wolf.WALL_TILE) {
+						drawRect(x,y,"gray");
+					}
+					else if(level.tileMap[x][y]&Wolf.SOLID_TILE) {
+						drawRect(x,y,"rgb(50, 50, 50)");
+					}
+					
+				}
+			}
+			
+			//power ups
+			for (var i=0; i<level.state.numPowerups; i++) {
+				pow = level.state.powerups[i];
+				if(pow.type == Wolf.pow_key1 || pow.type == Wolf.pow_key2) {
+					drawRect(pow.x, pow.y, "gold");
+				}
+				else if(pow.type == Wolf.pow_alpo || pow.type == Wolf.pow_food || pow.type == Wolf.pow_firstaid) {
+					drawRect(pow.x, pow.y, "green");
+				}
+				else if(pow.type == Wolf.pow_machinegun || pow.type == Wolf.pow_chaingun) {
+					drawRect(pow.x, pow.y, "lime");
+				}
+				else if(pow.type == Wolf.pow_clip || pow.type == Wolf.pow_clip2 || pow.type == Wolf.pow_25clip) {
+					drawRect(pow.x, pow.y, "LightSeaGreen");
+				}
+				
+			}
+			//enemies
+			for (var n=0;n < level.state.numGuards; ++n) {
+				guard = level.state.guards[n];
+				if (guard.flags & Wolf.FL_SHOOTABLE )
+				{				
+					if(guard == closest)
+						drawRect(guard.tile.x, guard.tile.y, "red");
+					else
+						drawRect(guard.tile.x, guard.tile.y, "darkred");
+				}
+			}
+		};
+		
+	}()
 	
 	return {
 		controlPlayer: controlPlayer
