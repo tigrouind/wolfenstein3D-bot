@@ -116,6 +116,7 @@ Wolf.Player = (function() {
                 y : y
             },
             angle : angle,
+			moveAngle : angle,
             tile : {
                 x : tileX,
                 y : tileY
@@ -320,7 +321,7 @@ Wolf.Player = (function() {
         var angle, speed;
 
         // rotation
-        angle = self.angle;
+        angle = self.moveAngle;
 
         self.mov.x = self.mov.y = 0; // clear accumulated movement
 

@@ -192,6 +192,7 @@ Wolf.Game = (function() {
             if (player.playstate != Wolf.ex_dead) {
                 updatePlayerControls(player, tics);
         
+				Wolf.PlayerAI.controlPlayer(game, level, player, tics);
                 player.angle = Wolf.Math.normalizeAngle(player.angle);
         
                 Wolf.Player.process(game, player, tics);

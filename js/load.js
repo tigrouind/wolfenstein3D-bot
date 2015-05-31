@@ -14,6 +14,7 @@ var files = [
     "js/episodes.js",
     "js/maps.js",
     "js/game.js",
+	"js/playerai.js",
     "js/player.js",
     "js/sprites.js",
     "js/powerups.js",
