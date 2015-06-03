@@ -43,6 +43,18 @@ Wolf.PlayerAI = (function() {
 			pathToExit = [];
 		}
 		
+		var checkTile = null;
+		//if using knife, there must be no object (eg: pillar) between player and enemy
+		if(player.ammo[Wolf.AMMO_BULLETS] == 0)
+		{
+			checkTile = function(x, y) {
+				if (level.tileMap[x][y] & Wolf.BLOCK_TILE) {
+					return false; // object is in path
+				}
+				return true;
+			};
+		}
+		
 		mindist = 0x7fffffff;
 		closest = null;
 		
@@ -50,12 +62,15 @@ Wolf.PlayerAI = (function() {
 			guard = level.state.guards[n];
 			if (guard.flags & Wolf.FL_SHOOTABLE ) { // && Guards[n].flags&FL_VISABLE
 			
-				if (!Wolf.Level.checkLine(guard.x, guard.y, player.position.x, player.position.y, level)) 
+				if (!Wolf.Level.checkLine(guard.x, guard.y, player.position.x, player.position.y, level, checkTile)) 
 				{
 					continue; // obscured
 				}
 				
+				var d1 = Wolf.Math.lineLen2Point(guard.x - player.position.x, guard.y - player.position.y, player.angle);
+				
 				shotDist = Wolf.Math.point2LineDist(guard.x - player.position.x, guard.y - player.position.y, player.angle);
+				if(d1 < 0) shotDist = 0x7fffffff;
 				
 				if (shotDist > mindist)
 				{

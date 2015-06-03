@@ -985,7 +985,7 @@ Wolf.Level = (function() {
      * @param {object} level The level object.
      * @returns {boolean} True if a straight line between 2 points is unobstructed, otherwise false.
      */
-    function checkLine(x1, y1, x2, y2, level) {
+    function checkLine(x1, y1, x2, y2, level, checkTile) {
         var xt1, yt1, xt2, yt2, /* tile positions */
             x, y,               /* current point in !tiles! */
             xdist, ydist,
@@ -1050,7 +1050,7 @@ Wolf.Level = (function() {
                             return false;
                         }
                     }
-                }
+                }								if(checkTile && !checkTile(x, y)) {					return false;				}				
                 x += xstep;
             } while (x != xt2);
         }
@@ -1091,7 +1091,7 @@ Wolf.Level = (function() {
                             return false;
                         }
                     }
-                }
+                }								if(checkTile && !checkTile(x, y)) {					return false;				}				
                 y += ystep;
             } while (y != yt2);
         }
