@@ -105,6 +105,7 @@ body {
     image-rendering : optimize-contrast;
     image-rendering : -webkit-optimize-contrast;
     -ms-interpolation-mode: nearest-neighbor;
+    image-rendering: pixelated;
 }
 
 #game .renderer .player-weapon {
