@@ -417,6 +417,10 @@ Wolf.PlayerAI = (function() {
 			canvas.fillRect(x*6, (63-y)*6, 6, 6);
 		};
 		
+		checkWall = function(level, x, y, colors) {
+			return colors.indexOf(level.wallTexX[x][y]) != -1;
+		}
+		
 		return function(level, player, closest) {
 			
 			canvas.clearRect(0, 0, 384, 384);
@@ -432,10 +436,10 @@ Wolf.PlayerAI = (function() {
 			for (var x=0;x<64;x++) {
 				for (var y=0;y<64;y++) {
 					if(x == player.tile.x && y == player.tile.y) {
-						drawRect(x,y,"red");
+						drawRect(x,y,"PeachPuff");
 					}
-					else if(level.tileMap[x][y]&Wolf.ELEVATOR_TILE) {
-						drawRect(x,y,"lime");
+					else if(level.tileMap[x][y]&Wolf.ELEVATOR_TILE || level.tileMap[x][y]&Wolf.EXIT_TILE) {
+						drawRect(x,y,"yellow");
 					}
 					else if(level.tileMap[x][y]&Wolf.DOOR_TILE && level.state.doorMap[x][y].action != Wolf.dr_open) {
 						if(!checkDoor(x, y, level, player))
@@ -447,7 +451,31 @@ Wolf.PlayerAI = (function() {
 						drawRect(x,y,"darkgray");
 					}					
 					else if(level.tileMap[x][y]&Wolf.WALL_TILE) {
-						drawRect(x,y,"gray");
+						if(checkWall(level, x, y, [1,3,5,7,11,53,55,65,69,73,77,85,97])) {
+							drawRect(x,y,"gray");
+						}
+						else if(checkWall(level, x, y, [27,29])) {
+							drawRect(x,y,"rgb(0, 128, 128)");
+						}
+						else if(checkWall(level, x, y, [9,13,15,17,67,71,79,81])) {
+							drawRect(x,y,"darkblue");
+						}
+						else if(checkWall(level, x, y, [19,21,23,45])) {
+							drawRect(x,y,"SaddleBrown");
+						} 
+						else if(checkWall(level, x, y, [57,59,61,63,83,87,89,91,93,95])) {
+							drawRect(x,y,"DarkGoldenRod");
+						} 
+						else if(checkWall(level, x, y, [33,35,39,75])) {
+							drawRect(x,y,"rgb(100,0,0)");
+						}  
+						else if(checkWall(level, x, y, [47,51])) {
+							drawRect(x,y,"olive");
+						}
+						else if(checkWall(level, x, y, [37,49])) {
+							drawRect(x,y,"purple");
+						}
+						
 					}
 					else if(level.tileMap[x][y]&Wolf.SOLID_TILE) {
 						drawRect(x,y,"rgb(50, 50, 50)");
