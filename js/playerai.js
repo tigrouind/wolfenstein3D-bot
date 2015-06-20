@@ -170,9 +170,8 @@ Wolf.PlayerAI = (function() {
 					if(((level.tileMap[x][y] & Wolf.ELEVATOR_TILE
 					||  (level.tileMap[x][y] & Wolf.EXIT_TILE))
 					|| (level.tileMap[x+1][y] & Wolf.ELEVATOR_TILE)
-					|| (level.tileMap[x][y+1] & Wolf.ELEVATOR_TILE)
-					|| (level.tileMap[x-1][y] & Wolf.ELEVATOR_TILE)
-					|| (level.tileMap[x][y-1] & Wolf.ELEVATOR_TILE)) && !(level.tileMap[x][y] & Wolf.SECRETLEVEL_TILE))
+					|| (level.tileMap[x-1][y] & Wolf.ELEVATOR_TILE))
+					&& !(level.tileMap[x][y] & Wolf.SECRETLEVEL_TILE))
 					{
 						console.log('found exit');
 						return true;
