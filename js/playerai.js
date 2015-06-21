@@ -446,13 +446,6 @@ Wolf.PlayerAI = (function() {
 			
 			canvas.clearRect(0, 0, 384, 384);
 			
-			//path 
-			for(var i = 0 ; i < pathToExit.length ; i++)
-			{
-				var path = pathToExit[i];
-				drawRect(path.x, path.y, "white");
-			}
-			
 			//tiles
 			for (var x=0;x<64;x++) {
 				for (var y=0;y<64;y++) {
@@ -508,6 +501,13 @@ Wolf.PlayerAI = (function() {
 					else
 						drawRect(guard.tile.x, guard.tile.y, "darkred");
 				}
+			}
+			
+			//path 
+			for(var i = 0 ; i < pathToExit.length ; i++)
+			{
+				var path = pathToExit[i];
+				drawRect(path.x, path.y, "rgba(255, 255, 255, 0.8)");
 			}
 		};
 		
