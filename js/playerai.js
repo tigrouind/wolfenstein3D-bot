@@ -38,7 +38,7 @@ Wolf.PlayerAI = (function() {
 			pathToExit = [];
 		}
 		
-		if((new Date).getTime() - game.level.state.startTime < 100) //player has die, reset path
+		if((new Date).getTime() - game.level.state.startTime < 100) //player has died, reset path
 		{
 			pathToExit = [];
 		}
@@ -133,31 +133,56 @@ Wolf.PlayerAI = (function() {
 		}
 		else if(!Wolf.PushWall.get().active && !(level.tileMap[x][y] & Wolf.ELEVATOR_TILE))
 		{	
-			//look for ammo
+			//look for ammo / weapons
 			if(pathToExit.length == 0)
 			{
 				pathToExit = findPath(player.tile.x, player.tile.y, level, player, function(x, y, cost) 
 				{ 
-					for (i=0; i<level.state.numPowerups; i++) {
+					for (i=0; i < level.state.numPowerups; i++) {
 						pow = level.state.powerups[i];
-						if (pow.x == x && pow.y == y && ((player.ammo[Wolf.AMMO_BULLETS] < 99 && (pow.type == Wolf.pow_clip || pow.type == Wolf.pow_clip2 || pow.type == Wolf.pow_25clip))  || pow.type == Wolf.pow_machinegun || pow.type == Wolf.pow_chaingun)) {							
-							if(cost < 15 || (player.ammo[Wolf.AMMO_BULLETS] < 30 /*&& cost < 30*/) //5 75 12
-							|| (pow.type == Wolf.pow_machinegun && !(player.items & Wolf.ITEM_WEAPON_3)) || (pow.type == Wolf.pow_chaingun && !(player.items & Wolf.ITEM_WEAPON_4)))
-							{
-								console.log('found ammo');
-								return true;
+						if (pow.x == x && pow.y == y)
+						{
+							switch (pow.type) {
+								case Wolf.pow_clip:
+								case Wolf.pow_clip2:
+								case Wolf.pow_25clip:
+									if ((player.ammo[Wolf.AMMO_BULLETS] < 99 && cost < 15) || player.ammo[Wolf.AMMO_BULLETS] < 30) {
+										console.log('found ammo');
+										return true;
+									}
+									break;
+									
+								case Wolf.pow_machinegun:
+									if (!(player.items & Wolf.ITEM_WEAPON_3)) {
+										console.log('found machine gun');
+										return true;
+									}
+									break;
+									
+								case Wolf.pow_chaingun:
+									if (!(player.items & Wolf.ITEM_WEAPON_4)) {
+										console.log('found chain gun');
+										return true;
+									}
+									break;
+									
+								case Wolf.pow_alpo:
+								case Wolf.pow_food:
+								case Wolf.pow_firstaid:
+									if ((player.health < 100 && cost < 20) || (player.health < 50 && cost < 100) || player.health < 30) {
+										console.log('found food');
+										return true;
+									}
+									break;
+								
+								case Wolf.pow_gibs:
+									if ((player.health < 11 && cost < 25)) {
+										console.log('found gibs');
+										return true;
+									}
+									break;
 							}
-							break;		
-						}			
-						if (pow.x == x && pow.y == y && ((player.health < 100 && (pow.type == Wolf.pow_alpo || pow.type == Wolf.pow_food || pow.type == Wolf.pow_firstaid))
-								|| (player.health < 11 && pow.type == Wolf.pow_alpo))) {
-							if(cost < 20 || (player.health < 50 && cost < 100) || (player.health < 30))
-							{
-								console.log('found food');
-								return true;
-							}
-							break;
-						}	
+						}
 					}
 				});
 			}
