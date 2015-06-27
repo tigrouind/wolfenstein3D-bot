@@ -436,7 +436,9 @@ Wolf.PlayerAI = (function() {
 	{
 		var canvaselement = document.getElementById('minimap');
 		var canvas = canvaselement.getContext("2d");
-		
+		var image = document.createElement("img");
+		image.src = "art/walls-shaded/64/walls.png";
+
 		drawRect = function(x, y, color) {
 			canvas.fillStyle = color; 
 			canvas.fillRect(x*6, (63-y)*6, 6, 6);
@@ -465,7 +467,7 @@ Wolf.PlayerAI = (function() {
 						drawRect(x,y,"darkgray");
 					}					
 					else if(level.tileMap[x][y]&Wolf.WALL_TILE) {
-						drawRect(x,y,"gray");
+						canvas.drawImage(image,0,level.wallTexX[x][y]*64-64,64,64, x*6, (63-y)*6,6,6);
 					}
 					else if(level.tileMap[x][y]&Wolf.SOLID_TILE) {
 						drawRect(x,y,"rgb(50, 50, 50)");
