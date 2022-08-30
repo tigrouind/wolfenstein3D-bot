@@ -99,6 +99,21 @@ Wolf.PlayerAI = (function() {
 		{
 			pathToExit = [];
 		}
+	
+		var escaping = false;
+		if(pathToExit.length == 0 && countEnemies(player.tile.x, player.tile.y, level, 7) >= 2)
+		{		
+			console.log('escaping');	
+			closest = null;
+			pathToExit = findPath(player.tile.x, player.tile.y, level, player, function(x, y, cost) 
+			{ 			
+				if(countEnemies(x, y, level, 8) <= 1)
+				{
+					escaping = true;
+					return true;
+				}
+			});
+		}
 		
 		if(closest)
 		{
@@ -128,7 +143,7 @@ Wolf.PlayerAI = (function() {
 				{
 					player.cmd.buttons |= Wolf.BUTTON_ATTACK;
 				}
-				pathToExit = [];
+				if(!escaping) pathToExit = [];
 			}
 		}
 		else if(!Wolf.PushWall.get().active && !(level.tileMap[x][y] & Wolf.ELEVATOR_TILE))
@@ -186,7 +201,7 @@ Wolf.PlayerAI = (function() {
 					}
 				});
 			}
-
+			
 			//look for exit
 			if(pathToExit.length == 0)
 			{
@@ -272,15 +287,17 @@ Wolf.PlayerAI = (function() {
 					
 					if(d1 < 0) dist = 0x7fffffff * Math.sign(dist); 
 					
-					if(dist < 0)
+					if(!escaping)
 					{
-						player.angle += Math.min(Wolf.TURNANGLESCALE, (-dist / 50) >> 0) * tics;
-					}
-					else
-					{
-						player.angle -= Math.min(Wolf.TURNANGLESCALE,  (dist / 50) >> 0) * tics;
-					}
-				
+						if(dist < 0)
+						{
+							player.angle += Math.min(Wolf.TURNANGLESCALE, (-dist / 50) >> 0) * tics;
+						}
+						else
+						{
+							player.angle -= Math.min(Wolf.TURNANGLESCALE,  (dist / 50) >> 0) * tics;
+						}
+					}			
 				}
 				else
 				{
@@ -407,6 +424,33 @@ Wolf.PlayerAI = (function() {
 		return pathToExit;
 	}
 	
+	function countEnemies(x, y, level, maxdistance)
+	{
+		var posx = Wolf.TILE2POS(x);
+		var posy = Wolf.TILE2POS(y);
+		
+		var count = 0;
+		for (n=0;n < level.state.numGuards; ++n) {
+			guard = level.state.guards[n];
+			if (guard.flags & Wolf.FL_SHOOTABLE ) { // && Guards[n].flags&FL_VISABLE
+			
+				if (!Wolf.Level.checkLine(guard.x, guard.y, posx, posy, level)) 
+				{
+					continue; // obscured
+				}
+									
+				var dx = Math.abs(guard.tile.x - x);
+				var dy = Math.abs(guard.tile.y - y);
+				var dist = Math.max(dx, dy);
+				if(dist <= maxdistance)
+				{
+					count++;
+				}
+			}
+		}
+		
+		return count;
+	}
 	
 	function checkDoor(x, y, level, player)
 	{ 
